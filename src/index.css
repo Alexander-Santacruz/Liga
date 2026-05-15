@@ -2,3 +2,14 @@ body {
   margin: 0;
   min-width: 320px;
 }
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
