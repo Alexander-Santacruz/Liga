@@ -1,104 +1,127 @@
+import { useMemo, useState } from 'react';
 import './App.css';
 
-const presidents = [
-  { id: 1, name: 'Florentino Pérez', year: 2000 },
-  { id: 2, name: 'Joan Laporta', year: 2003 },
-];
-
-const teams = [
-  {
-    id: 1,
-    name: 'Real Madrid',
-    city: 'Madrid',
-    stadium: 'Santiago Bernabéu',
-    capacity: 81000,
-    yearOfFundation: 1902,
-    presidentId: 1,
-  },
-  {
-    id: 2,
-    name: 'FC Barcelona',
-    city: 'Barcelona',
-    stadium: 'Camp Nou',
-    capacity: 99000,
-    yearOfFundation: 1899,
-    presidentId: 2,
-  },
-];
-
-const players = [
-  { id: 1, name: 'Vinícius Jr', position: 'Extremo', teamId: 1 },
-  { id: 2, name: 'Pedri', position: 'Volante', teamId: 2 },
-];
-
-const games = [{ id: 1, date: '2026-05-15', localGoals: 2, awayGoals: 1 }];
-
-const goals = [
-  {
-    id: 1,
-    name: 'Gol 1',
-    description: 'Remate de pierna derecha',
-    playerId: 1,
-    gameId: 1,
-  },
-];
-
-const teamGame = [
-  { id: 1, teamId: 1, gameId: 1 },
-  { id: 2, teamId: 2, gameId: 1 },
-];
-
-const teamsWithRelations = teams.map((team) => {
-  const president = presidents.find((item) => item.id === team.presidentId);
-  const featuredPlayer = players.find((item) => item.teamId === team.id);
-
-  return {
-    ...team,
-    president,
-    featuredPlayer,
-  };
-});
-
-const gamesWithRelations = games.map((game) => {
-  const relatedTeams = teamGame
-    .filter((item) => item.gameId === game.id)
-    .map((item) => teams.find((team) => team.id === item.teamId));
-
-  const relatedGoals = goals
-    .filter((goal) => goal.gameId === game.id)
-    .map((goal) => ({
-      ...goal,
-      player: players.find((player) => player.id === goal.playerId),
-    }));
-
-  return {
-    ...game,
-    localTeam: relatedTeams[0],
-    awayTeam: relatedTeams[1],
-    relatedGoals,
-  };
-});
-
-const teamViewRows = teamsWithRelations.map((team) => ({
-  team: team.name,
-  stadium: team.stadium,
-  president: team.president?.name ?? 'Sin presidente',
-  featuredPlayer: team.featuredPlayer?.name ?? 'Sin jugador',
-  position: team.featuredPlayer?.position ?? 'Sin posición',
-}));
-
-const gameViewRows = gamesWithRelations.flatMap((game) =>
-  game.relatedGoals.map((goal) => ({
-    date: game.date,
-    localGoals: game.localGoals,
-    awayGoals: game.awayGoals,
-    goalName: goal.name,
-    goalDetail: goal.description,
-    scorer: goal.player?.name ?? 'Sin jugador',
-  }))
-);
-
 function App() {
+  const [presidents] = useState([
+    { id: 1, name: 'Florentino Pérez', year: 2000 },
+    { id: 2, name: 'Joan Laporta', year: 2003 },
+  ]);
+
+  const [teams] = useState([
+    {
+      id: 1,
+      name: 'Real Madrid',
+      city: 'Madrid',
+      stadium: 'Santiago Bernabéu',
+      capacity: 81000,
+      yearOfFundation: 1902,
+      presidentId: 1,
+    },
+    {
+      id: 2,
+      name: 'FC Barcelona',
+      city: 'Barcelona',
+      stadium: 'Camp Nou',
+      capacity: 99000,
+      yearOfFundation: 1899,
+      presidentId: 2,
+    },
+  ]);
+
+  const [players] = useState([
+    { id: 1, name: 'Vinícius Jr', position: 'Extremo', teamId: 1 },
+    { id: 2, name: 'Pedri', position: 'Volante', teamId: 2 },
+  ]);
+
+  const [games] = useState([
+    { id: 1, date: '2026-05-15', localGoals: 2, awayGoals: 1 },
+  ]);
+
+  const [goals] = useState([
+    {
+      id: 1,
+      name: 'Gol 1',
+      description: 'Remate de pierna derecha',
+      playerId: 1,
+      gameId: 1,
+    },
+  ]);
+
+  const [teamGame] = useState([
+    { id: 1, teamId: 1, gameId: 1 },
+    { id: 2, teamId: 2, gameId: 1 },
+  ]);
+
+  const [selectedTeamId, setSelectedTeamId] = useState(teams[0]?.id ?? null);
+
+  const teamsWithRelations = useMemo(
+    () =>
+      teams.map((team) => {
+        const president = presidents.find((item) => item.id === team.presidentId);
+        const featuredPlayer = players.find((item) => item.teamId === team.id);
+
+        return {
+          ...team,
+          president,
+          featuredPlayer,
+        };
+      }),
+    [teams, presidents, players]
+  );
+
+  const gamesWithRelations = useMemo(
+    () =>
+      games.map((game) => {
+        const relatedTeams = teamGame
+          .filter((item) => item.gameId === game.id)
+          .map((item) => teams.find((team) => team.id === item.teamId));
+
+        const relatedGoals = goals
+          .filter((goal) => goal.gameId === game.id)
+          .map((goal) => ({
+            ...goal,
+            player: players.find((player) => player.id === goal.playerId),
+          }));
+
+        return {
+          ...game,
+          localTeam: relatedTeams[0],
+          awayTeam: relatedTeams[1],
+          relatedGoals,
+        };
+      }),
+    [games, teamGame, teams, goals, players]
+  );
+
+  const teamViewRows = useMemo(
+    () =>
+      teamsWithRelations.map((team) => ({
+        team: team.name,
+        stadium: team.stadium,
+        president: team.president?.name ?? 'Sin presidente',
+        featuredPlayer: team.featuredPlayer?.name ?? 'Sin jugador',
+        position: team.featuredPlayer?.position ?? 'Sin posición',
+      })),
+    [teamsWithRelations]
+  );
+
+  const gameViewRows = useMemo(
+    () =>
+      gamesWithRelations.flatMap((game) =>
+        game.relatedGoals.map((goal) => ({
+          date: game.date,
+          localGoals: game.localGoals,
+          awayGoals: game.awayGoals,
+          goalName: goal.name,
+          goalDetail: goal.description,
+          scorer: goal.player?.name ?? 'Sin jugador',
+        }))
+      ),
+    [gamesWithRelations]
+  );
+
+  const selectedTeam = teamsWithRelations.find((team) => team.id === selectedTeamId);
+
   return (
     <div className="league-app">
       <header className="hero">
@@ -201,6 +224,30 @@ function App() {
             <span className="eyebrow">Datos insertados</span>
             <h2>Equipos y relaciones principales</h2>
           </div>
+
+          <div className="team-selector">
+            <label htmlFor="team-select">Equipo seleccionado:</label>
+            <select
+              id="team-select"
+              value={selectedTeamId ?? ''}
+              onChange={(event) => setSelectedTeamId(Number(event.target.value))}
+            >
+              {teamsWithRelations.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {selectedTeam && (
+            <div className="selected-team-card">
+              <h3>{selectedTeam.name}</h3>
+              <p>{selectedTeam.city} · {selectedTeam.stadium}</p>
+              <p>Presidente: {selectedTeam.president?.name}</p>
+              <p>Jugador estrella: {selectedTeam.featuredPlayer?.name}</p>
+            </div>
+          )}
 
           <div className="club-grid">
             {teamsWithRelations.map((team) => (
