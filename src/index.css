@@ -1,52 +1,15 @@
-:root {
-  --fondo-crema: #f1f5e8;
-  --verde-nutrik: #91c13e;
-  --verde-oscuro: #1b300b;
-  --verde-medio: #6c8e64;
-  --acento-calido: #b8b3a1;
-  --gris-carbon: #4d4d4d;
-  --fuente-principal: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  scroll-behavior: smooth;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  width: 100%;
-  min-height: 100%;
-}
-
 body {
-  /* Cambia min-height por min-vh para asegurar que cubra toda la pantalla visual */
-  min-height: 100vh; 
-  background:
-    radial-gradient(circle at top left, rgba(145, 193, 62, 0.12), transparent 28%),
-    linear-gradient(180deg, #fbfcf7 0%, var(--fondo-crema) 100%);
-  background-attachment: fixed; /* Esto hace que el fondo no se corte al hacer scroll */
-  font-family: var(--fuente-principal);
-  color: var(--verde-oscuro);
-  line-height: 1.6;
+  margin: 0;
+  min-width: 320px;
 }
 
 a {
   color: inherit;
-  text-decoration: none;
-}
-
-img {
-  max-width: 100%;
-  display: block;
 }
 
 button,
 input,
 select,
 textarea {
-  font-family: var(--fuente-principal);
+  font: inherit;
 }
