@@ -21,7 +21,7 @@ function Footer() {
           <h3>Información</h3>
           <ul>
             <li><a href="/nosotros">Acerca de Nosotros</a></li>
-            <li><a href="/contacto">Contáctanos</a></li>
+            <li><a href="/contacto">Contactanos</a></li>
           </ul>
         </div>
 
